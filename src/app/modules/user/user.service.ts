@@ -37,6 +37,12 @@ const registerUser = async (payload: IUser) => {
   };
 };
 
+const getMyProfile = async (payload: IJwtPayload) => {
+  const user = await User.findById(payload.userId);
+  return user;
+};
+
 export const UserService = {
   registerUser,
+  getMyProfile,
 };

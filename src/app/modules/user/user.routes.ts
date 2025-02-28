@@ -2,6 +2,8 @@ import { Router } from "express";
 import { UserController } from "./user.controller";
 import validateRequest from "../../middleware/validateRequest";
 import { userValidation } from "./user.validation";
+import auth from "../../middleware/auth";
+import { UserRole } from "./user.interface";
 
 const router = Router();
 
@@ -9,6 +11,12 @@ router.post(
   "/register",
   validateRequest(userValidation),
   UserController.registerUser
+);
+
+router.get(
+  "/getMe",
+  auth(UserRole.ADMIN, UserRole.USER),
+  UserController.getMyProfile
 );
 
 export const UserRoutes = router;

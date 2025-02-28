@@ -20,11 +20,15 @@ const auth = (...requiredRoles: UserRole[]) => {
       ) as JwtPayload;
       const { userId, role, isActive } = decode;
       await User.isUserExistsById(userId);
+      if (!isActive) {
+        throw new AppError(httpStatus.FORBIDDEN, "User is blocked");
+      }
       if (requiredRoles && !requiredRoles.includes(role)) {
         throw new AppError(httpStatus.UNAUTHORIZED, "Unauthorized access");
       }
 
       req.user = decode as JwtPayload & { role: string };
+      next();
     } catch (err) {
       if (err instanceof TokenExpiredError) {
         return next(

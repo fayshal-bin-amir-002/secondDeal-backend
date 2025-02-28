@@ -1,6 +1,7 @@
 import config from "../../config";
 import catchAsync from "../../utils/catchAsync";
 import sendResponse from "../../utils/sendResponse";
+import { IJwtPayload } from "../../utils/token.utils";
 import { UserService } from "./user.service";
 import httpStatus from "http-status";
 
@@ -26,6 +27,17 @@ const registerUser = catchAsync(async (req, res) => {
   });
 });
 
+const getMyProfile = catchAsync(async (req, res) => {
+  const result = await UserService.getMyProfile(req.user as IJwtPayload);
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: "Profile retrieved successfully",
+    data: result,
+  });
+});
+
 export const UserController = {
   registerUser,
+  getMyProfile,
 };
