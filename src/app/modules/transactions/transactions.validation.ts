@@ -16,3 +16,13 @@ export const transactionValidationSchema = z.object({
       .default(TransactionStatus.PENDING),
   }),
 });
+
+export const transactionStatusValidation = z.object({
+  body: z.object({
+    status: z.enum([TransactionStatus.COMPLETED, TransactionStatus.CANCELED], {
+      errorMap: () => ({
+        message: "Invalid status, should be 'Completed' or 'Canceled'",
+      }),
+    }),
+  }),
+});

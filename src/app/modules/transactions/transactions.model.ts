@@ -37,6 +37,16 @@ transactionsSchema.statics.isItemAvailable = async (
   return await item.populate("userId category");
 };
 
+transactionsSchema.statics.isTransactionExists = async (
+  id: string | Types.ObjectId
+) => {
+  const transaction = await Transaction.findById(id);
+  if (!transaction) {
+    throw new AppError(httpStatus.NOT_FOUND, "Transaction not found!");
+  }
+  return transaction;
+};
+
 const Transaction = model<ITransaction, TransactionModel>(
   "Transactions",
   transactionsSchema

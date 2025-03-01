@@ -16,4 +16,5 @@ export interface ITransaction extends Document {
 
 export interface TransactionModel extends Model<ITransaction> {
   isItemAvailable(id: string | Types.ObjectId): Promise<IListing>;
+  isTransactionExists(id: string | Types.ObjectId): Promise<ITransaction>;
 }
