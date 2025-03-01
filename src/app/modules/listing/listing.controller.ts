@@ -17,6 +17,57 @@ const postAnItemIntoListing = catchAsync(async (req, res) => {
   });
 });
 
+const getAllListingItems = catchAsync(async (req, res) => {
+  const result = await ListingService.getAllListingItems();
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: "Successfully retrieved all listing items.",
+    data: result,
+  });
+});
+
+const getASingleListingItem = catchAsync(async (req, res) => {
+  const result = await ListingService.getASingleListingItem(req.params.id);
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: "Successfully retrieved listing item.",
+    data: result,
+  });
+});
+
+const updateAListingItem = catchAsync(async (req, res) => {
+  const result = await ListingService.updateAListingItem(
+    req.params.id,
+    req.body,
+    req.user as IJwtPayload
+  );
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: "Successfully updated listing item.",
+    data: result,
+  });
+});
+
+const deleteAListingItem = catchAsync(async (req, res) => {
+  const result = await ListingService.deleteAListingItem(
+    req.params.id,
+    req.user as IJwtPayload
+  );
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: "Successfully deleted listing item.",
+    data: result,
+  });
+});
+
 export const ListingController = {
   postAnItemIntoListing,
+  getAllListingItems,
+  getASingleListingItem,
+  updateAListingItem,
+  deleteAListingItem,
 };

@@ -19,13 +19,13 @@ const listingSchema = new Schema<IListing, ListingModel>(
       required: true,
     },
     images: { type: [String], required: true },
-    userID: { type: Schema.Types.ObjectId, ref: "User", required: true },
+    userId: { type: Schema.Types.ObjectId, ref: "User", required: true },
     status: {
       type: String,
       enum: Object.values(ListingStatus),
-      required: true,
+      default: ListingStatus.AVAILABLE,
     },
-    category: { type: String, required: true },
+    category: { type: Schema.Types.ObjectId, ref: "Category", required: true },
   },
   { timestamps: true }
 );
@@ -35,7 +35,7 @@ listingSchema.statics.isItemExists = async (id: string) => {
   if (!item) {
     throw new AppError(httpStatus.NOT_FOUND, "Item not found!");
   }
-  return item;
+  return item.populate("userId category");
 };
 
 const Listing = model<IListing, ListingModel>("Listing", listingSchema);

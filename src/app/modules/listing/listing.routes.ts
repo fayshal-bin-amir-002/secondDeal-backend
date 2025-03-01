@@ -3,7 +3,10 @@ import { ListingController } from "./listing.controller";
 import auth from "../../middleware/auth";
 import { UserRole } from "../user/user.interface";
 import validateRequest from "../../middleware/validateRequest";
-import { listingValidation } from "./listing.validation";
+import {
+  listingValidation,
+  updateListingValidation,
+} from "./listing.validation";
 
 const router = Router();
 
@@ -13,6 +16,23 @@ router.post(
   auth(UserRole.USER),
   validateRequest(listingValidation),
   ListingController.postAnItemIntoListing
+);
+
+router.get("/", ListingController.getAllListingItems);
+
+router.get("/:id", ListingController.getASingleListingItem);
+
+router.patch(
+  "/:id",
+  auth(UserRole.USER),
+  validateRequest(updateListingValidation),
+  ListingController.updateAListingItem
+);
+
+router.delete(
+  "/:id",
+  auth(UserRole.USER, UserRole.ADMIN),
+  ListingController.deleteAListingItem
 );
 
 export const ListingRoutes = router;

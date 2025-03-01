@@ -24,6 +24,18 @@ const userSchema = new Schema<IUser, UserModel>(
   }
 );
 
+userSchema.set("toJSON", {
+  transform: (_doc, ret) => {
+    return {
+      _id: ret._id,
+      name: ret.name,
+      email: ret.email,
+      phone: ret.phoneNumber,
+      location: ret.location,
+    };
+  },
+});
+
 userSchema.pre("save", async function (next) {
   const user = this;
   user.password = await bcrypt.hash(

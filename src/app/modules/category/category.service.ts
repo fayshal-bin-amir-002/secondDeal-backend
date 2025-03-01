@@ -7,6 +7,12 @@ const createCategory = async (payload: ICategory) => {
   return result;
 };
 
+const getAllCategory = async () => {
+  const result = await Category.find();
+  return result;
+};
+
 export const CategoryService = {
   createCategory,
+  getAllCategory,
 };
