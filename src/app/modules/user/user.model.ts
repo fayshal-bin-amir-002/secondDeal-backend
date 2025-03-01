@@ -33,6 +33,7 @@ userSchema.pre("save", async function (next) {
   next();
 });
 
+// checking that user is exists with email or phone
 userSchema.statics.isUserExists = async (email: string, phone: string) => {
   const existingUser = await User.findOne({
     $or: [{ email: email }, { phoneNumber: phone }],
@@ -46,21 +47,27 @@ userSchema.statics.isUserExists = async (email: string, phone: string) => {
   return existingUser;
 };
 
-userSchema.statics.isUserExistsByCredentials = async (credentials: string) => {
+// checking that user is exists with credential(email or phone)
+userSchema.statics.isUserExistsByCredentials = async (credential: string) => {
   const existingUser = await User.findOne({
-    $or: [{ email: credentials }, { phoneNumber: credentials }],
-  });
+    $or: [{ email: credential }, { phoneNumber: credential }],
+  }).select("+password");
   if (!existingUser) {
     throw new AppError(
       httpStatus.BAD_REQUEST,
       "This Email/Phone Number is not registered. Please register first."
     );
   }
+  if (!existingUser?.isActive) {
+    throw new AppError(httpStatus.FORBIDDEN, "User is blocked");
+  }
+
   return existingUser;
 };
 
+// checking that user is exists with id
 userSchema.statics.isUserExistsById = async (id: string) => {
-  const existingUser = await User.findById(id).select("+password");
+  const existingUser = await User.findById(id);
   if (!existingUser) {
     throw new AppError(httpStatus.NOT_FOUND, "User not found!");
   }
@@ -68,6 +75,21 @@ userSchema.statics.isUserExistsById = async (id: string) => {
     throw new AppError(httpStatus.FORBIDDEN, "User is blocked");
   }
   return existingUser;
+};
+
+// checking that password is matched  or not
+userSchema.statics.isPasswordMatched = async (
+  plainTextPassword: string,
+  hashedPassword: string
+) => {
+  const isPasswordMatched = await bcrypt.compare(
+    plainTextPassword,
+    hashedPassword
+  );
+  if (!isPasswordMatched) {
+    throw new AppError(httpStatus.UNAUTHORIZED, "Wrong password");
+  }
+  return isPasswordMatched;
 };
 
 const User = model<IUser, UserModel>("User", userSchema);

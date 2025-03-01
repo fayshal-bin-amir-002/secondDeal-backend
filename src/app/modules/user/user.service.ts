@@ -16,7 +16,7 @@ const registerUser = async (payload: IUser) => {
   const { _id, role, isActive } = user;
 
   const jwtPayload: IJwtPayload = {
-    userId: _id,
+    userId: _id as string,
     role,
     isActive,
   };
@@ -37,12 +37,42 @@ const registerUser = async (payload: IUser) => {
   };
 };
 
+const getAllUsers = async () => {
+  const users = await User.find();
+  return users;
+};
+
 const getMyProfile = async (payload: IJwtPayload) => {
   const user = await User.findById(payload.userId);
   return user;
 };
 
+const banAUser = async (id: string) => {
+  const user = await User.isUserExistsById(id);
+  if (user?.role === UserRole.ADMIN) {
+    throw new AppError(httpStatus.FORBIDDEN, "You can't ban an admin");
+  }
+  user.isActive = false;
+  await user.save();
+  return user;
+};
+
+const unBanAUser = async (id: string) => {
+  const user = await User.findByIdAndUpdate(
+    id,
+    { isActive: true },
+    { new: true }
+  );
+  if (!user) {
+    throw new AppError(httpStatus.NOT_FOUND, "User not found!");
+  }
+  return user;
+};
+
 export const UserService = {
   registerUser,
+  getAllUsers,
   getMyProfile,
+  banAUser,
+  unBanAUser,
 };

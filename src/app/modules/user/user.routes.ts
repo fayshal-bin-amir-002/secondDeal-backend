@@ -13,10 +13,16 @@ router.post(
   UserController.registerUser
 );
 
+router.get("/", auth(UserRole.ADMIN), UserController.getAllUsers);
+
 router.get(
   "/getMe",
   auth(UserRole.ADMIN, UserRole.USER),
   UserController.getMyProfile
 );
+
+router.patch("/:id/ban", auth(UserRole.ADMIN), UserController.banAUser);
+
+router.patch("/:id/unBan", auth(UserRole.ADMIN), UserController.unBanAUser);
 
 export const UserRoutes = router;

@@ -1,9 +1,15 @@
-import { Router } from 'express';
-import { authController } from './auth.controller';
+import { Router } from "express";
+import validateRequest from "../../middleware/validateRequest";
+import { authValidation } from "./auth.validation";
+import { AuthController } from "./auth.controller";
 
 const router = Router();
 
 // Define routes
-router.get('/', authController.getAll);
+router.post(
+  "/login",
+  validateRequest(authValidation),
+  AuthController.loginUser
+);
 
-export default router;
+export const AuthRoutes = router;

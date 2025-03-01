@@ -38,7 +38,7 @@ const auth = (...requiredRoles: UserRole[]) => {
           )
         );
       }
-      return next(new AppError(httpStatus.UNAUTHORIZED, "Invalid token"));
+      return next(new AppError(httpStatus.UNAUTHORIZED, "Unauthorized access"));
     }
   });
 };

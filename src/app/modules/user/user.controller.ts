@@ -27,6 +27,16 @@ const registerUser = catchAsync(async (req, res) => {
   });
 });
 
+const getAllUsers = catchAsync(async (req, res) => {
+  const users = await UserService.getAllUsers();
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: "Users retrieved successfully",
+    data: users,
+  });
+});
+
 const getMyProfile = catchAsync(async (req, res) => {
   const result = await UserService.getMyProfile(req.user as IJwtPayload);
   sendResponse(res, {
@@ -37,7 +47,30 @@ const getMyProfile = catchAsync(async (req, res) => {
   });
 });
 
+const banAUser = catchAsync(async (req, res) => {
+  const user = await UserService.banAUser(req.params.id);
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: "User banned successfully",
+    data: user,
+  });
+});
+
+const unBanAUser = catchAsync(async (req, res) => {
+  const user = await UserService.unBanAUser(req.params.id);
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: "User unbanned successfully",
+    data: user,
+  });
+});
+
 export const UserController = {
   registerUser,
+  getAllUsers,
   getMyProfile,
+  banAUser,
+  unBanAUser,
 };
