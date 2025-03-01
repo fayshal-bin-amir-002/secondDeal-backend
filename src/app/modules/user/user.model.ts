@@ -1,5 +1,5 @@
-import { Schema, model, Document } from "mongoose";
-import { IUser, UserModel, UserRole } from "./user.interface";
+import { Schema, model } from "mongoose";
+import { IUser, Locations, UserModel, UserRole } from "./user.interface";
 import bcrypt from "bcrypt";
 import config from "../../config";
 import AppError from "../../errors/appError";
@@ -11,7 +11,7 @@ const userSchema = new Schema<IUser, UserModel>(
     email: { type: String, required: true, unique: true },
     phoneNumber: { type: String, required: true, unique: true },
     password: { type: String, required: true, select: 0 },
-    location: { type: String, required: true },
+    location: { type: String, enum: Object.values(Locations), required: true },
     role: {
       type: String,
       enum: Object.values(UserRole),
@@ -85,7 +85,10 @@ userSchema.statics.isUserExistsById = async (id: string) => {
     throw new AppError(httpStatus.NOT_FOUND, "User not found!");
   }
   if (!existingUser?.isActive) {
-    throw new AppError(httpStatus.FORBIDDEN, "User is blocked");
+    throw new AppError(
+      httpStatus.FORBIDDEN,
+      `${existingUser?.name || "User"} is blocked`
+    );
   }
   return existingUser;
 };

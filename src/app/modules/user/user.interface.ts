@@ -5,12 +5,23 @@ export enum UserRole {
   USER = "user",
 }
 
+export enum Locations {
+  DHAKA = "Dhaka",
+  CHITTAGONG = "Chittagong",
+  RAJSHAHI = "Rajshahi",
+  KHULNA = "Khulna",
+  BARISAL = "Barisal",
+  SYLHET = "Sylhet",
+  RANGPUR = "Rangpur",
+  MYMENSINGH = "Mymensingh",
+}
+
 export interface IUser extends Document {
   name: string;
   email: string;
   phoneNumber: string;
   password: string;
-  location: string;
+  location: Locations;
   role: UserRole;
   isActive: boolean;
 }
