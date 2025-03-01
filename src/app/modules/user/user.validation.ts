@@ -17,6 +17,9 @@ export const userValidation = z.object({
     password: z.string().trim().min(6, {
       message: "Password is required and must be at least 6 characters long",
     }),
+    location: z.string().trim().min(1, {
+      message: "Location is required.",
+    }),
     role: z.nativeEnum(UserRole).default(UserRole.USER),
     isActive: z.boolean().default(true),
   }),
