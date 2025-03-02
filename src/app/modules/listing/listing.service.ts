@@ -4,6 +4,7 @@ import { IJwtPayload } from "../../utils/token.utils";
 import { Types } from "mongoose";
 import AppError from "../../errors/appError";
 import httpStatus from "http-status";
+import QueryBuilder from "../../builder/QueryBuilder";
 
 const postAnItemIntoListing = async (user: IJwtPayload, payload: IListing) => {
   const item = {
@@ -17,9 +18,21 @@ const postAnItemIntoListing = async (user: IJwtPayload, payload: IListing) => {
   return result;
 };
 
-const getAllListingItems = async () => {
-  const items = await Listing.find().populate("userId").populate("category");
-  return items;
+const getAllListingItems = async (query: Record<string, unknown>) => {
+  const listingItemsQuery = new QueryBuilder(Listing.find(), query)
+    .search(["title", "category"])
+    .filter()
+    .sort()
+    .paginate()
+    .fields();
+  const result = await listingItemsQuery.modelQuery
+    .populate("userId")
+    .populate("category");
+  const meta = await listingItemsQuery.countTotal();
+  return {
+    result,
+    meta,
+  };
 };
 
 const getASingleListingItem = async (id: string | Types.ObjectId) => {

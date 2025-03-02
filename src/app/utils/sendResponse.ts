@@ -1,10 +1,10 @@
 import { Response } from "express";
 
 type TMeta = {
-  limit: number;
   page: number;
-  totalPages: number;
-  totalCount: number;
+  limit: number;
+  total: number;
+  totalPage: number;
 };
 
 type TResponse<T> = {

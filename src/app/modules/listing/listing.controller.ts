@@ -18,12 +18,13 @@ const postAnItemIntoListing = catchAsync(async (req, res) => {
 });
 
 const getAllListingItems = catchAsync(async (req, res) => {
-  const result = await ListingService.getAllListingItems();
+  const { result, meta } = await ListingService.getAllListingItems(req.query);
   sendResponse(res, {
     statusCode: httpStatus.OK,
     success: true,
     message: "Successfully retrieved all listing items.",
     data: result,
+    meta: meta,
   });
 });
 

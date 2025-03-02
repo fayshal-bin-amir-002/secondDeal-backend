@@ -23,6 +23,7 @@ const registerUser = catchAsync(async (req, res) => {
     message: "User registration completed successfully!",
     data: {
       accessToken,
+      refreshToken,
     },
   });
 });
