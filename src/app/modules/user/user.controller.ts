@@ -29,12 +29,13 @@ const registerUser = catchAsync(async (req, res) => {
 });
 
 const getAllUsers = catchAsync(async (req, res) => {
-  const users = await UserService.getAllUsers();
+  const { result, meta } = await UserService.getAllUsers(req.query);
   sendResponse(res, {
     statusCode: httpStatus.OK,
     success: true,
     message: "Users retrieved successfully",
-    data: users,
+    data: result,
+    meta: meta,
   });
 });
 

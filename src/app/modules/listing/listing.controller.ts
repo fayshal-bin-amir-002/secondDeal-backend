@@ -28,6 +28,20 @@ const getAllListingItems = catchAsync(async (req, res) => {
   });
 });
 
+const getUserListingItems = catchAsync(async (req, res) => {
+  const { result, meta } = await ListingService.getUserListingItems(
+    req.user as IJwtPayload,
+    req.query
+  );
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: "Successfully retrieved listing items.",
+    data: result,
+    meta: meta,
+  });
+});
+
 const getASingleListingItem = catchAsync(async (req, res) => {
   const result = await ListingService.getASingleListingItem(req.params.id);
   sendResponse(res, {
@@ -71,4 +85,5 @@ export const ListingController = {
   getASingleListingItem,
   updateAListingItem,
   deleteAListingItem,
+  getUserListingItems,
 };

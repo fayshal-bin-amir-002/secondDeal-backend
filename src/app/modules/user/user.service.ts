@@ -4,6 +4,7 @@ import httpStatus from "http-status";
 import User from "./user.model";
 import { createToken, IJwtPayload } from "../../utils/token.utils";
 import config from "../../config";
+import QueryBuilder from "../../builder/QueryBuilder";
 
 const registerUser = async (payload: IUser) => {
   if ([UserRole.ADMIN].includes(payload?.role)) {
@@ -37,9 +38,16 @@ const registerUser = async (payload: IUser) => {
   };
 };
 
-const getAllUsers = async () => {
-  const users = await User.find();
-  return users;
+const getAllUsers = async (query: Record<string, unknown>) => {
+  const userQuery = new QueryBuilder(User.find(), query)
+    // .search(["email", "phoneNumber"])
+    .filter()
+    .sort()
+    .paginate()
+    .fields();
+  const result = await userQuery.modelQuery;
+  const meta = await userQuery.countTotal();
+  return { result, meta };
 };
 
 const getMyProfile = async (payload: IJwtPayload) => {

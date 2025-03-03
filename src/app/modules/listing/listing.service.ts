@@ -20,7 +20,29 @@ const postAnItemIntoListing = async (user: IJwtPayload, payload: IListing) => {
 
 const getAllListingItems = async (query: Record<string, unknown>) => {
   const listingItemsQuery = new QueryBuilder(Listing.find(), query)
-    .search(["title", "category"])
+    // .search(["title"])
+    .filter()
+    .sort()
+    .paginate()
+    .fields();
+  const result = await listingItemsQuery.modelQuery;
+
+  const meta = await listingItemsQuery.countTotal();
+  return {
+    result,
+    meta,
+  };
+};
+
+const getUserListingItems = async (
+  user: IJwtPayload,
+  query: Record<string, unknown>
+) => {
+  const listingItemsQuery = new QueryBuilder(
+    Listing.find({ userId: user?.userId }),
+    query
+  )
+    // .search(["title", "category"])
     .filter()
     .sort()
     .paginate()
@@ -80,4 +102,5 @@ export const ListingService = {
   getASingleListingItem,
   updateAListingItem,
   deleteAListingItem,
+  getUserListingItems,
 };

@@ -7,6 +7,7 @@ import AppError from "../../errors/appError";
 import httpStatus from "http-status";
 import Listing from "../listing/listing.model";
 import { ListingStatus } from "../listing/listing.interface";
+import QueryBuilder from "../../builder/QueryBuilder";
 
 const createTransaction = async (buyer: IJwtPayload, payload: ITransaction) => {
   const item = await Transaction.isItemAvailable(payload?.itemId);
@@ -97,27 +98,58 @@ const updateTransactionStatus = async (
   }
 };
 
-const getAllTransactions = async () => {
-  const result = await Transaction.find().populate("itemId sellerId buyerId");
-  return result;
-};
-
-const getUserPurchases = async (user: IJwtPayload) => {
-  await User.isUserExistsById(user?.userId);
-  const result = await Transaction.find({ buyerId: user?.userId }).populate(
+const getAllTransactions = async (query: Record<string, unknown>) => {
+  const transactionQuery = new QueryBuilder(Transaction.find(), query)
+    .filter()
+    .sort()
+    .paginate()
+    .fields();
+  const result = await transactionQuery.modelQuery.populate(
     "itemId sellerId buyerId"
   );
-
-  return result;
+  const meta = await transactionQuery.countTotal();
+  return { result, meta };
 };
 
-const getUserSales = async (user: IJwtPayload) => {
+const getUserPurchases = async (
+  user: IJwtPayload,
+  query: Record<string, unknown>
+) => {
   await User.isUserExistsById(user?.userId);
-  const result = await Transaction.find({ sellerId: user?.userId }).populate(
+
+  const purchasesQuery = new QueryBuilder(
+    Transaction.find({ buyerId: user?.userId }),
+    query
+  )
+    .filter()
+    .sort()
+    .paginate()
+    .fields();
+  const result = await purchasesQuery.modelQuery.populate(
     "itemId sellerId buyerId"
   );
+  const meta = await purchasesQuery.countTotal();
+  return { result, meta };
+};
 
-  return result;
+const getUserSales = async (
+  user: IJwtPayload,
+  query: Record<string, unknown>
+) => {
+  await User.isUserExistsById(user?.userId);
+  const salesQuery = new QueryBuilder(
+    Transaction.find({ sellerId: user?.userId }),
+    query
+  )
+    .filter()
+    .sort()
+    .paginate()
+    .fields();
+  const result = await salesQuery.modelQuery.populate(
+    "itemId sellerId buyerId"
+  );
+  const meta = await salesQuery.countTotal();
+  return { result, meta };
 };
 
 export const TransactionsService = {

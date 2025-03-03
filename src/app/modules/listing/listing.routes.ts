@@ -18,6 +18,12 @@ router.post(
   ListingController.postAnItemIntoListing
 );
 
+router.get(
+  "/my-listing",
+  auth(UserRole.USER),
+  ListingController.getUserListingItems
+);
+
 router.get("/", ListingController.getAllListingItems);
 
 router.get("/:id", ListingController.getASingleListingItem);
