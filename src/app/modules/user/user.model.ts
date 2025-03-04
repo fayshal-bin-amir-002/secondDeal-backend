@@ -30,8 +30,10 @@ userSchema.set("toJSON", {
       _id: ret._id,
       name: ret.name,
       email: ret.email,
-      phone: ret.phoneNumber,
+      phoneNumber: ret.phoneNumber,
       location: ret.location,
+      isActive: ret.isActive,
+      role: ret.role,
     };
   },
 });

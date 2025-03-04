@@ -60,9 +60,15 @@ const banAUser = async (id: string) => {
   if (user?.role === UserRole.ADMIN) {
     throw new AppError(httpStatus.FORBIDDEN, "You can't ban an admin");
   }
-  user.isActive = false;
-  await user.save();
-  return user;
+  const result = await User.findByIdAndUpdate(
+    id,
+    { isActive: false },
+    { new: true }
+  );
+  if (!result) {
+    throw new AppError(httpStatus.NOT_FOUND, "User not found!");
+  }
+  return result;
 };
 
 const unBanAUser = async (id: string) => {

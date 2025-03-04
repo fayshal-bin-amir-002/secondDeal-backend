@@ -12,7 +12,7 @@ const createTransaction = catchAsync(async (req, res) => {
   sendResponse(res, {
     statusCode: httpStatus.OK,
     success: true,
-    message: "Transaction is succeeded. Please wait for seller confirmation.",
+    message: "Request sent successfully. Please wait for seller confirmation.",
     data: result,
   });
 });

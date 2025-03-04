@@ -20,12 +20,14 @@ const postAnItemIntoListing = async (user: IJwtPayload, payload: IListing) => {
 
 const getAllListingItems = async (query: Record<string, unknown>) => {
   const listingItemsQuery = new QueryBuilder(Listing.find(), query)
-    // .search(["title"])
+    .search(["title"])
     .filter()
     .sort()
     .paginate()
     .fields();
-  const result = await listingItemsQuery.modelQuery;
+  const result = await listingItemsQuery.modelQuery
+    .populate("userId")
+    .populate("category");
 
   const meta = await listingItemsQuery.countTotal();
   return {
@@ -42,7 +44,7 @@ const getUserListingItems = async (
     Listing.find({ userId: user?.userId }),
     query
   )
-    // .search(["title", "category"])
+    .search(["title"])
     .filter()
     .sort()
     .paginate()

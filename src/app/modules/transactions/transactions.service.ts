@@ -14,6 +14,10 @@ const createTransaction = async (buyer: IJwtPayload, payload: ITransaction) => {
   await User.isUserExistsById(buyer?.userId);
   await User.isUserExistsById(item?.userId?._id);
 
+  if (buyer?.userId.toString() === item?.userId?._id.toString()) {
+    throw new AppError(httpStatus.BAD_REQUEST, "You can't buy your own item");
+  }
+
   const isTransactionExists = await Transaction.findOne({
     itemId: payload?.itemId,
     buyerId: buyer?.userId,
@@ -67,8 +71,6 @@ const updateTransactionStatus = async (
     }
 
     if (user?.userId !== transaction?.sellerId?._id.toString()) {
-      console.log(user?.userId);
-      console.log(transaction?.sellerId?._id.toString());
       throw new AppError(
         httpStatus.FORBIDDEN,
         "You can't update this transaction"
@@ -81,8 +83,10 @@ const updateTransactionStatus = async (
       { new: true }
     ).populate("itemId sellerId buyerId");
 
+    const itemId = transaction.itemId._id;
+
     if (status === TransactionStatus.COMPLETED) {
-      await Listing.findByIdAndUpdate(id, { status: ListingStatus.SOLD });
+      await Listing.findByIdAndUpdate(itemId, { status: ListingStatus.SOLD });
     }
 
     await session.commitTransaction();
@@ -104,9 +108,15 @@ const getAllTransactions = async (query: Record<string, unknown>) => {
     .sort()
     .paginate()
     .fields();
-  const result = await transactionQuery.modelQuery.populate(
-    "itemId sellerId buyerId"
-  );
+  const result = await transactionQuery.modelQuery
+    .populate("sellerId buyerId")
+    .populate({
+      path: "itemId",
+      populate: {
+        path: "category",
+        model: "Category",
+      },
+    });
   const meta = await transactionQuery.countTotal();
   return { result, meta };
 };
@@ -125,9 +135,15 @@ const getUserPurchases = async (
     .sort()
     .paginate()
     .fields();
-  const result = await purchasesQuery.modelQuery.populate(
-    "itemId sellerId buyerId"
-  );
+  const result = await purchasesQuery.modelQuery
+    .populate("sellerId buyerId")
+    .populate({
+      path: "itemId",
+      populate: {
+        path: "category",
+        model: "Category",
+      },
+    });
   const meta = await purchasesQuery.countTotal();
   return { result, meta };
 };
@@ -145,9 +161,15 @@ const getUserSales = async (
     .sort()
     .paginate()
     .fields();
-  const result = await salesQuery.modelQuery.populate(
-    "itemId sellerId buyerId"
-  );
+  const result = await salesQuery.modelQuery
+    .populate("sellerId buyerId")
+    .populate({
+      path: "itemId",
+      populate: {
+        path: "category",
+        model: "Category",
+      },
+    });
   const meta = await salesQuery.countTotal();
   return { result, meta };
 };
