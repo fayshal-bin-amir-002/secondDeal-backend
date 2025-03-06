@@ -5,11 +5,14 @@ import { Types } from "mongoose";
 import AppError from "../../errors/appError";
 import httpStatus from "http-status";
 import QueryBuilder from "../../builder/QueryBuilder";
+import User from "../user/user.model";
 
 const postAnItemIntoListing = async (user: IJwtPayload, payload: IListing) => {
+  const userInfo = await User.isUserExistsById(user?.userId);
   const item = {
     ...payload,
-    userId: user?.userId,
+    userId: userInfo?._id,
+    location: userInfo?.location,
   };
 
   const result = (
@@ -20,6 +23,27 @@ const postAnItemIntoListing = async (user: IJwtPayload, payload: IListing) => {
 
 const getAllListingItems = async (query: Record<string, unknown>) => {
   const listingItemsQuery = new QueryBuilder(Listing.find(), query)
+    .search(["title"])
+    .filter()
+    .sort()
+    .paginate()
+    .fields();
+  const result = await listingItemsQuery.modelQuery
+    .populate("userId")
+    .populate("category");
+
+  const meta = await listingItemsQuery.countTotal();
+  return {
+    result,
+    meta,
+  };
+};
+
+const getAllAvailableListingItems = async (query: Record<string, unknown>) => {
+  const listingItemsQuery = new QueryBuilder(
+    Listing.find({ status: "Available" }),
+    query
+  )
     .search(["title"])
     .filter()
     .sort()
@@ -105,4 +129,5 @@ export const ListingService = {
   updateAListingItem,
   deleteAListingItem,
   getUserListingItems,
+  getAllAvailableListingItems,
 };

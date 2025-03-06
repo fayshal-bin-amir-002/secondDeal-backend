@@ -19,6 +19,7 @@ export interface IListing extends Document {
   userId: Types.ObjectId;
   status: ListingStatus;
   category: Types.ObjectId;
+  location: string;
 }
 
 export interface ListingModel extends Model<IListing> {

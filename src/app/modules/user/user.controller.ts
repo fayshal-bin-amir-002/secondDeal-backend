@@ -69,10 +69,24 @@ const unBanAUser = catchAsync(async (req, res) => {
   });
 });
 
+const updateUserProfile = catchAsync(async (req, res) => {
+  const result = await UserService.updateUserProfile(
+    req.user as IJwtPayload,
+    req.body
+  );
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: "User profile updated successfully",
+    data: result,
+  });
+});
+
 export const UserController = {
   registerUser,
   getAllUsers,
   getMyProfile,
   banAUser,
   unBanAUser,
+  updateUserProfile,
 };

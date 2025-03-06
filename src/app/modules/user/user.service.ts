@@ -83,10 +83,24 @@ const unBanAUser = async (id: string) => {
   return user;
 };
 
+const updateUserProfile = async (
+  user: IJwtPayload,
+  payload: Pick<IUser, "name" | "email" | "phoneNumber" | "location">
+) => {
+  await User.isUserExistsById(user?.userId);
+  const result = await User.findByIdAndUpdate(
+    user?.userId,
+    { ...payload },
+    { new: true }
+  );
+  return result;
+};
+
 export const UserService = {
   registerUser,
   getAllUsers,
   getMyProfile,
   banAUser,
   unBanAUser,
+  updateUserProfile,
 };

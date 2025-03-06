@@ -4,6 +4,7 @@ import { AuthRoutes } from "../modules/auth/auth.routes";
 import { ListingRoutes } from "../modules/listing/listing.routes";
 import { CategoryRoutes } from "../modules/category/category.routes";
 import { TransactionsRoutes } from "../modules/transactions/transactions.routes";
+import { MetaRoutes } from "../modules/meta/meta.routes";
 
 const router = Router();
 
@@ -27,6 +28,10 @@ const moduleRoutes = [
   {
     path: "/transactions",
     route: TransactionsRoutes,
+  },
+  {
+    path: "/meta-data",
+    route: MetaRoutes,
   },
 ];
 

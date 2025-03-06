@@ -26,6 +26,8 @@ router.get(
 
 router.get("/", ListingController.getAllListingItems);
 
+router.get("/available-items", ListingController.getAllAvailableListingItems);
+
 router.get("/:id", ListingController.getASingleListingItem);
 
 router.patch(

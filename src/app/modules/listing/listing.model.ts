@@ -26,6 +26,7 @@ const listingSchema = new Schema<IListing, ListingModel>(
       default: ListingStatus.AVAILABLE,
     },
     category: { type: Schema.Types.ObjectId, ref: "Category", required: true },
+    location: { type: String, required: true },
   },
   { timestamps: true }
 );

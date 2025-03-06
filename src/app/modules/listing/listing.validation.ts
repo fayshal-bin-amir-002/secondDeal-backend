@@ -34,6 +34,7 @@ export const listingValidation = z.object({
       .default(ListingStatus.AVAILABLE),
 
     category: z.string().min(1, { message: "Category is required" }).trim(),
+    location: z.string().trim().optional(),
   }),
 });
 
