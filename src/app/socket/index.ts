@@ -1,6 +1,4 @@
 import { Server } from "socket.io";
-import { verifyToken } from "../utils/token.utils";
-import config from "../config";
 import User from "../modules/user/user.model";
 import { Message } from "../modules/message/message.model";
 import { MessageService } from "../modules/message/message.service";
