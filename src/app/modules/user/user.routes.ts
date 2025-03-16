@@ -16,6 +16,12 @@ router.post(
 router.get("/", auth(UserRole.ADMIN), UserController.getAllUsers);
 
 router.get(
+  "/user/:id",
+  auth(UserRole.ADMIN, UserRole.USER),
+  UserController.getAUserDetails
+);
+
+router.get(
   "/getMe",
   auth(UserRole.ADMIN, UserRole.USER),
   UserController.getMyProfile

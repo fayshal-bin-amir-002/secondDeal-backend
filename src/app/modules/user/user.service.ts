@@ -96,6 +96,11 @@ const updateUserProfile = async (
   return result;
 };
 
+const getAUserDetails = async (id: string) => {
+  const user = await User.isUserExistsById(id);
+  return user;
+};
+
 export const UserService = {
   registerUser,
   getAllUsers,
@@ -103,4 +108,5 @@ export const UserService = {
   banAUser,
   unBanAUser,
   updateUserProfile,
+  getAUserDetails,
 };

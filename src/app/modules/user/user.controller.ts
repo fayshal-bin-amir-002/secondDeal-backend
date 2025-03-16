@@ -82,6 +82,16 @@ const updateUserProfile = catchAsync(async (req, res) => {
   });
 });
 
+const getAUserDetails = catchAsync(async (req, res) => {
+  const user = await UserService.getAUserDetails(req.params.id);
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: "User retrieved successfully",
+    data: user,
+  });
+});
+
 export const UserController = {
   registerUser,
   getAllUsers,
@@ -89,4 +99,5 @@ export const UserController = {
   banAUser,
   unBanAUser,
   updateUserProfile,
+  getAUserDetails,
 };
